@@ -30,7 +30,7 @@ jobs:
         push: true
         platforms: linux/amd64,linux/arm64
         file: ./server/Dockerfile
-        tags: sstc/gocron:server
+        tags: sstc/gocron2:server
     - uses: actions/checkout@v4
     - uses: christian-korneck/update-container-description-action@v1
       env:

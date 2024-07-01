@@ -1,6 +1,6 @@
 #!/bin/bash
 
-./gocron web &
-./gocron-node -allow-root &
+./gocron2 web &
+./gocron2-node -allow-root &
 wait -n
 exit $?
