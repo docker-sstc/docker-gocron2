@@ -4,22 +4,16 @@ set -Eeuo pipefail
 
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
-ALL_IMAGE=sstc/headful-chromium:latest
-
-TEMPLATE_0=$(cat ./Dockerfile-0)
-TEMPLATE_1=$(cat ./Dockerfile-1-build)
-TEMPLATE_2=$(cat ./Dockerfile-2-download)
+TAGS=$(find . -mindepth 1 -maxdepth 1 -type d -exec basename {} \; | grep '^[^\.]')
+PARTIAL_0=$(cat ./Dockerfile-0)
 
 function generate() {
 	local template="$1"
 	local target="$2"
 	if [ -f "$target" ]; then
 		cat "$template" |
-			ALL_IMAGE="$ALL_IMAGE" \
-				TEMPLATE_0="$TEMPLATE_0" \
-				TEMPLATE_1="$TEMPLATE_1" \
-				TEMPLATE_2="$TEMPLATE_2" \
-				envsubst >"$target"
+			PARTIAL_0="$PARTIAL_0" \
+			envsubst >"$target"
 		echo "$target updated."
 	else
 		echo >&2 "File not found ($target)"
@@ -34,6 +28,6 @@ function generate_by_tag() {
 	generate "$template" "$target"
 }
 
-for tag in all scratch; do
+for tag in $TAGS; do
 	generate_by_tag "$tag"
 done

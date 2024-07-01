@@ -4,40 +4,40 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - id: meta
-      uses: docker/metadata-action@v3
+      uses: docker/metadata-action@v5
       with:
         images: |
-          sstc/gocron
+          sstc/gocron2
         tags: |
           type=raw,value=latest
-          type=raw,value=scratch
-    - uses: docker/setup-qemu-action@v2
-    - uses: docker/setup-buildx-action@v2
-    - uses: docker/login-action@v1
+          type=raw,value=all
+    - uses: docker/setup-qemu-action@v3
+    - uses: docker/setup-buildx-action@v3
+    - uses: docker/login-action@v3
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_TOKEN }}
-    - name: :scratch
-      uses: docker/build-push-action@v4
-      with:
-        push: true
-        platforms: linux/amd64,linux/arm64
-        file: ./scratch/Dockerfile
-        tags: ${{ steps.meta.outputs.tags }}
     - name: :all
-      uses: docker/build-push-action@v4
+      uses: docker/build-push-action@v6
       with:
         push: true
         platforms: linux/amd64,linux/arm64
         file: ./all/Dockerfile
-        tags: sstc/gocron:all
-    - uses: actions/checkout@v2
+        tags: ${{ steps.meta.outputs.tags }}
+    - name: :server
+      uses: docker/build-push-action@v6
+      with:
+        push: true
+        platforms: linux/amd64,linux/arm64
+        file: ./server/Dockerfile
+        tags: sstc/gocron:server
+    - uses: actions/checkout@v4
     - uses: christian-korneck/update-container-description-action@v1
       env:
         DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
         DOCKER_PASS: ${{ secrets.DOCKERHUB_PASSWORD }}
       with:
-        destination_container_repo: sstc/gocron
+        destination_container_repo: sstc/gocron2
         short_description: https://github.com/${{ github.repository }}
     - uses: up9cloud/action-notify@master
       if: cancelled() == false

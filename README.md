@@ -1,82 +1,79 @@
-# docker-gocron
+# docker-gocron2
 
 ## Usage
 
-> Simple way: gocron and gocron-node in same container
+> One container: gocron2 and gocron2-node are in the same container
 
 ```bash
-# Step 1: Up
+# Up gocron2 and gocron2-node
 docker run -d --rm \
-  -v /path/to/conf:/gocron/conf \
-  -v /path/to/log:/gocron/log \
+  -v /path/to/conf:/gocron2/conf \
+  -v /path/to/log:/gocron2/log \
   -v /my/task-scripts:/app \
   -p 5920:5920 \
-  sstc/gocron:all
+  sstc/gocron2
 
-# Step 2: Open 127.0.0.1:5920 to install
+# Open 127.0.0.1:5920 to install
 ```
 
-> Hard ways: gocron and gocron-node are in the different containers, but they're on same host
+> One host: gocron2 and gocron2-node are in the different containers, but on the same host
 
 ```bash
-# Step 1: Up gocron
-docker run -d --name gocron \
-  -v /path/to/conf:/gocron/conf \
-  -v /path/to/log:/gocron/log \
+# Up gocron2
+docker run -d --name gocron2 \
+  -v /path/to/conf:/gocron2/conf \
+  -v /path/to/log:/gocron2/log \
   --net host \
-  sstc/gocron:latest
+  sstc/gocron2:server
 
-# Step 2: Open 127.0.0.1:5920 to install
-
-# Step 3: Up gocron-node
-docker run -d --name gocron-node \
+# Up gocron2-node
+docker run -d --name gocron2-node \
   -v /path/to/my-task-scripts:/app \
   --net host \
-  sstc/gocron:all gocron-node -allow-root
+  sstc/gocron2 /gocron2/gocron2-node -allow-root
+
+# Open 127.0.0.1:5920 to install
 ```
 
-> Multiple nodes
+> Multiple nodes with certs
 
 ```bash
-# Step 1: Create certs for main node
+# Create certs for main node
 docker run --rm \
-  -v /path/to/out:/gocron/out \
-  sstc/gocron:all ./init-cert.sh
+  -v /path/to/out:/gocron2/out \
+  sstc/gocron2 ./init-cert.sh
 
-# Step 2: Create certs for worker nodes, do it multiple times with all ips of nodes
+# Create certs for worker nodes
 docker run --rm \
-  -v /path/to/out:/gocron/out \
-  sstc/gocron:all ./init-cert.sh 1.2.3.4
+  -v /path/to/out:/gocron2/out \
+  sstc/gocron2 ./init-cert.sh 1.2.3.4
 
-# Step 3: Up main node
-docker run -d --name gocron \
-  -v /path/to/conf:/gocron/conf \
-  -v /path/to/log:/gocron/log \
-  -v /path/to/out:/gocron/out \
-  -p 5920:5920 \
-  sstc/gocron:latest
-
-# Step 4: Open 127.0.0.1:5920 to install
-
-# Step 5: Add those to /path/to/conf/app.ini
+# Configure main node: add those to /path/to/conf/app.ini
 #   enable_tls = true
-#   ca_file    = /gocron/out/Root_CA.crt
-#   cert_file  = /gocron/out/127.0.0.1.crt
-#   key_file   = /gocron/out/127.0.0.1.key
+#   ca_file    = /gocron2/out/Root_CA.crt
+#   cert_file  = /gocron2/out/127.0.0.1.crt
+#   key_file   = /gocron2/out/127.0.0.1.key
 
-# Step 6: Restart main node
-docker restart gocron
+# Up main node
+docker run -d --name gocron2 \
+  -v /path/to/conf:/gocron2/conf \
+  -v /path/to/log:/gocron2/log \
+  -v /path/to/out:/gocron2/out \
+  -p 5920:5920 \
+  sstc/gocron2:server
 
-# Step 7: Copy necessary files in /path/to/out to hosts of worker nodes
+# Copy cert files in /path/to/out for the worker nodes
 
-# Step 6: Go to hosts and run, do this multiple times to up all worker nodes
-docker run -d --name gocron-node \
-  -v /path/to/out:/gocron/out \
+# Up all worker nodes
+docker run -d --name gocron2-node \
+  -v /path/to/out:/gocron2/out \
   -v /path/to/my-task-scripts:/app \
   -p 5921:5921 \
-  sstc/gocron:all gocron-node -allow-root \
+  sstc/gocron2 gocron2-node -allow-root \
   -enable-tls \
-  -ca-file /gocron/out/Root_CA.crt \
-  -cert-file /gocron/out/1.2.3.4.crt \
-  -key-file /gocron/out/1.2.3.4.key
+  -ca-file /gocron2/out/Root_CA.crt \
+  -cert-file /gocron2/out/1.2.3.4.crt \
+  -key-file /gocron2/out/1.2.3.4.key
+
+# Open 127.0.0.1:5920 to install
 ```

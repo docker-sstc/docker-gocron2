@@ -17,3 +17,12 @@ RUN set -ex; \
     tar zvxf ${GOCRON2_NODE_DOWNLOAD_FILE}; \
 	wget ${CERTSTRAP_DOWNLOAD_URL} -o certstrap; \
 	chmod +x certstrap
+
+FROM scratch
+
+WORKDIR /gocron2
+COPY --from=builder /tmp/gocron2 /gocron2/gocron2
+
+VOLUME [ "/gocron2/conf", "/gocron2/log", "/gocron2/out" ]
+EXPOSE 5920
+CMD [ "/gocron2/gocron2", "web" ]

@@ -2,7 +2,7 @@
 
 NAME="Root CA"
 YEARS=99
-cd /gocron
+cd /gocron2
 if [ -n "$1" ]; then
 	NODE_IP="$1"
 	./certstrap request-cert --ip $NODE_IP --common-name $NODE_IP --passphrase ""
