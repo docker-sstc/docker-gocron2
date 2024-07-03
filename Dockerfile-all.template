@@ -44,6 +44,7 @@ COPY run-all.sh /gocron2/run-all.sh
 COPY init-cert.sh /gocron2/init-cert.sh
 
 # https://github.com/node-red/node-red-docker/blob/master/docker-custom/Dockerfile.debian
+# https://npmtrends.com/n8n-vs-node-red
 RUN set -ex; \
     apt update; \
     DEBIAN_FRONTEND=noninteractive apt install --no-install-recommends -y \
