@@ -15,8 +15,10 @@ jobs:
         images: |
           sstc/gocron2
         tags: |
-          type=raw,value=latest
+          type=raw,value=latest,enable={{is_default_branch}}
           type=raw,value=all
+          type=semver,pattern={{version}}-all
+          type=semver,pattern={{major}}.{{minor}}-all
     - uses: docker/setup-qemu-action@v3
     - uses: docker/setup-buildx-action@v3
     - uses: docker/login-action@v3
@@ -30,13 +32,19 @@ jobs:
         platforms: linux/amd64,linux/arm64
         file: ./all/Dockerfile
         tags: ${{ steps.meta.outputs.tags }}
+        build-args: |
+          GOCRON2_VERSION=1.6.5
     - name: :server
       uses: docker/build-push-action@v6
       with:
         push: true
         platforms: linux/amd64,linux/arm64
         file: ./server/Dockerfile
-        tags: sstc/gocron2:server
+        tags: |
+          sstc/gocron2:server
+          sstc/gocron2:1.6.5-server
+        build-args: |
+          GOCRON2_VERSION=1.6.5
     - uses: actions/checkout@v4
     - uses: christian-korneck/update-container-description-action@v1
       env:
