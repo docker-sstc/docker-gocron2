@@ -1,6 +1,7 @@
 # docker-gocron2
 
-[![Docker Pulls](https://img.shields.io/docker/pulls/sstc/gocron2)](https://hub.docker.com/r/sstc/gocron2)
+[![Build workflow](https://github.com/docker-sstc/docker-gocron2/actions/workflows/main.yml/badge.svg)](https://github.com/docker-sstc/docker-gocron2/actions)
+[![Docker pulls](https://img.shields.io/docker/pulls/sstc/echo-server.svg)](https://hub.docker.com/r/sstc/echo-server)
 
 ## Usage
 
