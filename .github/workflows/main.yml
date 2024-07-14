@@ -40,6 +40,7 @@ jobs:
         images: |
           sstc/gocron2
         tags: |
+          latest=false
           type=raw,value=server
           type=semver,pattern={{version}}-server
           type=semver,pattern={{major}}.{{minor}}-server
