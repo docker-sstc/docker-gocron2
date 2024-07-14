@@ -39,8 +39,9 @@ jobs:
       with:
         images: |
           sstc/gocron2
-        tags: |
+        flavor: |
           latest=false
+        tags: |
           type=raw,value=server
           type=semver,pattern={{version}}-server
           type=semver,pattern={{major}}.{{minor}}-server
