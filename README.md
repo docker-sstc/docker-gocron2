@@ -1,5 +1,7 @@
 # docker-gocron2
 
+[![Docker Pulls](https://img.shields.io/docker/pulls/sstc/gocron2)](https://hub.docker.com/r/sstc/gocron2)
+
 ## Usage
 
 > One container: gocron2 and gocron2-node are in the same container
